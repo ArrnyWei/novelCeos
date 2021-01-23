@@ -1,0 +1,6 @@
+framework module Pods_ceos {
+  umbrella header "Pods-ceos-umbrella.h"
+
+  export *
+  module * { export * }
+}
