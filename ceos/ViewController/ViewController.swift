@@ -33,14 +33,10 @@ class ViewController: UIViewController{
         
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view, typically from a nib.
-//        homeDic = appdelegate.parse.getHome();
         pageSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor:UIColor.white], for: UIControl.State.normal);
         pageSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor:UIColor.white], for: UIControl.State.selected);
         title = "小說瀏覽器"
         appdelegate.viewController = self;
-        
-//        backItem = UIBarButtonItem(image: UIImage(named: "head_icon_back"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(ViewController.backClick(_:)));
         backItem = UIBarButtonItem();
         backItem?.tintColor = UIColor.white;
         navigationController?.navigationItem.backBarButtonItem = backItem;
@@ -49,20 +45,15 @@ class ViewController: UIViewController{
         sortItem?.tintColor = UIColor.white;
         
         loadingAlertController = UIAlertController(title: nil, message: "載入中...\n", preferredStyle: UIAlertController.Style.alert);
-        
-        //        let indicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 40, width: 50, height: 50));
         let indicator = UIActivityIndicatorView(frame: (loadingAlertController?.view.bounds)!);
         indicator.frame = CGRect(x: indicator.frame.origin.x, y: indicator.frame.origin.y + 15, width: indicator.frame.size.width, height: indicator.frame.size.height)
         indicator.autoresizingMask = [.flexibleWidth, .flexibleHeight];
         indicator.style = UIActivityIndicatorView.Style.gray;
-        //        indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge;
         
         loadingAlertController?.view.addSubview(indicator);
         
         indicator.isUserInteractionEnabled = false;
         indicator.startAnimating();
-
-        appdelegate.fbAdCanOpen = UIApplication.shared.canOpenURL(URL(string: "fb://")!)
         
     }
     

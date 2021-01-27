@@ -326,14 +326,7 @@ class Parser: NSObject,XMLParserDelegate {
         else {
             finalUrl = "\(self.peopleHostURL)\(novelUrl)";
         }
-        
-//        guard let myURL = URL(string: "\(self.peopleHostURL)\(novelUrl)") else {
-//            print("Error: \(self.peopleHostURL) doesn't seem to be a valid URL")
-//            return [:];
-//        }
-        
         do {
-//            let dogString = changeDogStringToPeopleString(try Data(contentsOf: URL(string: finalUrl)!));
             let dogString = changeDogStringToPeopleStringforPeople(try Data(contentsOf: URL(string: finalUrl)!))
             
             if let doc = try? HTML(html: dogString, encoding: .utf8) {
@@ -348,12 +341,6 @@ class Parser: NSObject,XMLParserDelegate {
                 if let firstString = doc.at_xpath("//meta[@property='og:description']")?["content"]!.replacingOccurrences(of: "&nbsp;", with: ""){
                     descString = descString + firstString;
                 }
-                
-                
-//                if let secondString = doc.at_xpath("//dl[@class='jieshao']/dd[@class='jieshao_content']/p")?.text?.replacingOccurrences(of: "&nbsp;", with: "") {
-//                    descString = descString + secondString
-//                }
-                
                 dic.setValue(descString, forKey: "desc");
                 
                 for link in doc.xpath("//div[@class='story_list_m62topxs']/div[@class='cp_list_m62topxs']") {

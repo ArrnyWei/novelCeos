@@ -52,76 +52,30 @@ class ReadPageViewController: UIPageViewController,UIPageViewControllerDataSourc
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         transitionType = 0
         
-//        if pageNumber == (self.readViewControllerArray.count - 1){
-//            return nil;
-//        }
-//        else if pageNumber == self.readViewControllerArray.count - 2{
-//            let finalViewController = readViewControllerArray[pageNumber + 1] as? FBAdViewController;
-//            return finalViewController
-//        }
-//        else {
-//            let finalViewController = readViewControllerArray[pageNumber + 1] as! ReadViewController;
-//
-//
-//            return finalViewController
-//        }
-        if viewController is FBAdViewController {
+        let currentViewController = viewController as! ReadViewController;
+        
+        if currentViewController.pageNumber == readViewControllerArray.count - 1 {
             (self.parent as! ContentViewController).pageReloadDown();
             return nil;
         }
         else {
-            let currentViewController = viewController as! ReadViewController;
-            
-            if currentViewController.pageNumber == readViewControllerArray.count - 1 {
-                (self.parent as! ContentViewController).pageReloadDown();
-                return nil;
-            }
-            else if currentViewController.pageNumber == readViewControllerArray.count - 2 && appDelegate.fbAdCanOpen == true{
-                return readViewControllerArray[currentViewController.pageNumber + 1] as! FBAdViewController
-            }
-            else {
-                return readViewControllerArray[currentViewController.pageNumber + 1] as! ReadViewController
-            }
+            return readViewControllerArray[currentViewController.pageNumber + 1] as! ReadViewController
         }
-        
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         transitionType = 1;
         
-        if viewController is FBAdViewController {
-            return readViewControllerArray[readViewControllerArray.count - 2] as! ReadViewController
+        let currentViewController = viewController as! ReadViewController;
+        
+        if currentViewController.pageNumber == 0 {
+            (self.parent as! ContentViewController).pageReloadUp();
+            return nil;
         }
         else {
-            let currentViewController = viewController as! ReadViewController;
-            
-            if currentViewController.pageNumber == 0 {
-                (self.parent as! ContentViewController).pageReloadUp();
-                return nil;
-            }
-            else {
-                return readViewControllerArray[currentViewController.pageNumber - 1] as! ReadViewController
-            }
+            return readViewControllerArray[currentViewController.pageNumber - 1] as! ReadViewController
         }
-//        if pageNumber == 0 {
-//            return nil;
-//        }
-//        else {
-//            let finalViewController = readViewControllerArray[pageNumber - 1] as! ReadViewController;
-//            return finalViewController
-//        }
         
     }
-    
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

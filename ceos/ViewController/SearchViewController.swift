@@ -7,11 +7,9 @@
 //
 
 import UIKit
-import GoogleMobileAds
 import WebKit
-import FBAudienceNetwork
 
-class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UIWebViewDelegate,FBInterstitialAdDelegate {
+class SearchViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,UIWebViewDelegate {
 
     
     @IBOutlet weak var searchTableView: UITableView!
@@ -20,59 +18,19 @@ class SearchViewController: UIViewController,UITableViewDelegate,UITableViewData
     var start = 1;
     let count = 20;
     let appdelegate = UIApplication.shared.delegate as! AppDelegate;
-    var interstitialAd: FBInterstitialAd!
-    var interstitial: GADInterstitial!
 //    @IBOutlet weak var searchWebView: WKWebView!
     @IBOutlet weak var searchWebView: UIWebView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-//
-        
-        if appdelegate.fbAdCanOpen == true {
-            interstitialAd = FBInterstitialAd(placementID: "156413368451300_156439345115369");
-            interstitialAd.delegate = self;
-            
-            interstitialAd.load();
-        }
-        else {
-            interstitial = GADInterstitial(adUnitID: "ca-app-pub-6753518483501394/9544707714")
-            let request = GADRequest()
-            interstitial.load(request)
-        }
-        
-        
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-        
-//        getSearchList();
-        
-        
-        if interstitial != nil {
-            if interstitial.isReady && appdelegate.fbAdCanOpen == false{
-                interstitial.present(fromRootViewController: self);
-            }
-        }
-        
-        
         searchWebView.loadRequest(URLRequest(url: URL(string: "http://cse.google.com/cse?cx=008945028460834109019%3Akn_kwux2xms&q=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)#gsc.tab=0&gsc.q=\(searchText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)&gsc.page=0")!));
 
         
     }
-    
-    func interstitialAdDidLoad(_ interstitialAd: FBInterstitialAd) {
-        interstitialAd.show(fromRootViewController: self);
-    }
-    
-    func interstitialAd(_ interstitialAd: FBInterstitialAd, didFailWithError error: Error) {
-        print(error)
-    }
-    
     
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebView.NavigationType) -> Bool {
        

@@ -32,8 +32,8 @@ class FindViewController: UIViewController ,UITableViewDelegate,UITableViewDataS
         
         findBookTableView.rowHeight = UITableView.automaticDimension;
         
-        serverSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor:UIColor(red: 247.0/255.0, green: 146.0/255.0, blue: 30.0/255.0, alpha: 1.0)], for: UIControl.State.normal);
-        serverSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor:UIColor(red: 247.0/255.0, green: 146.0/255.0, blue: 30.0/255.0, alpha: 1.0)], for: UIControl.State.selected);
+        serverSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor:UIColor.white], for: UIControl.State.normal);
+        serverSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.foregroundColor:UIColor.white], for: UIControl.State.selected);
         
         let textFieldInsideSearchBar = bookSearchBar.value(forKey: "searchField") as? UITextField
         
@@ -386,35 +386,6 @@ class FindViewController: UIViewController ,UITableViewDelegate,UITableViewDataS
         return headerView;
     }
     
-//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        if serverSegmentedControl.selectedSegmentIndex == 0 {
-//            if section == 0 {
-//                return "● 分類小說";
-//            }
-//            else if section == 1 {
-//                return "● 最新小說更新";
-//            }
-//            else {
-//                return "● 熱門小說推薦";
-//            }
-//        }
-//        else {
-//            if section == 0 {
-//                return "● 分類小說";
-//            }
-//            else if section == 1 {
-//                return "● 最新更新";
-//            }
-//            else if section == 2 {
-//                return "● 熱門小說推薦";
-//            }
-//            else {
-//                return "● 最新入庫";
-//            }
-//        }
-//
-//    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if serverSegmentedControl.selectedSegmentIndex == 0 {
             if section == 0 {
@@ -443,28 +414,9 @@ class FindViewController: UIViewController ,UITableViewDelegate,UITableViewDataS
         }
        
     }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == "toList" {
-//            let typeViewController = segue.destination as! TypeViewController;
-//            typeViewController.typeString = typeTitle;
-//        }
-//    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

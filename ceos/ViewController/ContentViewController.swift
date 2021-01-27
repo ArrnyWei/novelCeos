@@ -7,17 +7,11 @@
 //
 
 import UIKit
-import GoogleMobileAds
 
 
 extension NSAttributedString {
     
     public convenience init?(HTMLString html: String, font: UIFont? = nil ,backcolor:UIColor,textColor:UIColor) throws {
-        
-//        let options = [
-//            NSAttributedString.DocumentAttributeKey.documentType: NSAttributedString.DocumentType.html,
-//            NSAttributedString.DocumentAttributeKey.characterEncoding: NSNumber(value: String.Encoding.utf8.rawValue)
-//        ]
         
         guard let data = html.data(using: .utf8, allowLossyConversion: true) else {
             throw NSError(domain: "Parse Error", code: 0, userInfo: nil)
@@ -74,7 +68,6 @@ class ContentViewController: UIViewController , UITextViewDelegate{
     var contentString = "";
     var faveId = "";
     var faveDic = NSMutableDictionary();
-    @IBOutlet weak var bannerView: GADBannerView!
     var listArray = NSMutableArray();
     var novelId = "";
     var listIndex = 0;
@@ -93,11 +86,6 @@ class ContentViewController: UIViewController , UITextViewDelegate{
         
         self.contentTextView.backgroundColor = appdelegate.backColor;
         appdelegate.inContent = true;
-        
-        
-        bannerView.adUnitID = "ca-app-pub-6753518483501394/5840127384"
-        bannerView.rootViewController = self;
-        bannerView.load(GADRequest());
         self.title = listTitle;
         self.navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         
@@ -225,17 +213,7 @@ class ContentViewController: UIViewController , UITextViewDelegate{
                 readReadViewControllers.add(readViewController);
                 pageCount += 1;
             }
-            
-            if appdelegate.fbAdCanOpen == true {
-                let fbAdViewController = self.storyboard?.instantiateViewController(withIdentifier: "FBAdViewController") as! FBAdViewController;
-                fbAdViewController.view.frame = CGRect(x: 0, y: 0, width: testView.frame.size.width, height: testView.frame.size.height);
-                fbAdViewController.pageNumber = pageCount;
-                
-                readReadViewControllers.add(fbAdViewController);
-            }
-            
-            
-            
+
             let options = [UIPageViewController.OptionsKey.spineLocation:NSNumber(value: UIPageViewController.SpineLocation.min.rawValue as Int)]
             if contentPageController != nil {
                 contentPageController?.view.removeFromSuperview();

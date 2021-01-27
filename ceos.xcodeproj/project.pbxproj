@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7B060F771FEBA77000769A9F /* FbAdTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B060F761FEBA77000769A9F /* FbAdTableViewCell.swift */; };
 		7B1568F91FF0EBB5003B971A /* ReadPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1568F81FF0EBB5003B971A /* ReadPageViewController.swift */; };
 		7B1568FB1FF0EC3D003B971A /* ReadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1568FA1FF0EC3D003B971A /* ReadViewController.swift */; };
-		7B1568FD1FF0F5F7003B971A /* FBAdViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B1568FC1FF0F5F7003B971A /* FBAdViewController.swift */; };
 		7B22F8661F25F0FC006DA398 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B22F8651F25F0FC006DA398 /* libsqlite3.0.tbd */; };
 		7B22F86A1F25F5EE006DA398 /* DBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7B22F8691F25F5EE006DA398 /* DBHelper.m */; };
 		7B22F86C1F274503006DA398 /* ceos.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 7B22F86B1F274503006DA398 /* ceos.sqlite */; };
@@ -70,10 +68,8 @@
 
 /* Begin PBXFileReference section */
 		581F43FF296D301FEACD5886 /* Pods-ceos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ceos.release.xcconfig"; path = "Pods/Target Support Files/Pods-ceos/Pods-ceos.release.xcconfig"; sourceTree = "<group>"; };
-		7B060F761FEBA77000769A9F /* FbAdTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FbAdTableViewCell.swift; sourceTree = "<group>"; };
 		7B1568F81FF0EBB5003B971A /* ReadPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadPageViewController.swift; sourceTree = "<group>"; };
 		7B1568FA1FF0EC3D003B971A /* ReadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadViewController.swift; sourceTree = "<group>"; };
-		7B1568FC1FF0F5F7003B971A /* FBAdViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBAdViewController.swift; sourceTree = "<group>"; };
 		7B22F8651F25F0FC006DA398 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		7B22F8671F25F5ED006DA398 /* ceos-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ceos-Bridging-Header.h"; sourceTree = "<group>"; };
 		7B22F8681F25F5EE006DA398 /* DBHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBHelper.h; sourceTree = "<group>"; };
@@ -171,7 +167,6 @@
 			isa = PBXGroup;
 			children = (
 				7B940BE21F1E09D700845620 /* NovelTitleTableViewCell.swift */,
-				7B060F761FEBA77000769A9F /* FbAdTableViewCell.swift */,
 				7B8B07A41F1C94B50017E9A2 /* TypeTableViewCell.swift */,
 				7B8B07A61F1CA4BC0017E9A2 /* NiceTableViewCell.swift */,
 			);
@@ -191,7 +186,6 @@
 				7BCAE16E1F305A77003B6FFF /* SettingTableViewController.swift */,
 				7B1568F81FF0EBB5003B971A /* ReadPageViewController.swift */,
 				7B1568FA1FF0EC3D003B971A /* ReadViewController.swift */,
-				7B1568FC1FF0F5F7003B971A /* FBAdViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -305,7 +299,6 @@
 				7BB2A4AE1E6FE92F0048CB9C /* Resources */,
 				7B96C14F1F7E3D0B0017EFFA /* Embed Frameworks */,
 				E86B42AEC2ADB23D87CDE94B /* [CP] Embed Pods Frameworks */,
-				48A83C75C3C559C4DEF84CF4 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -327,9 +320,8 @@
 				TargetAttributes = {
 					7BB2A4AF1E6FE92F0048CB9C = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = QLE2M232BK;
 						LastSwiftMigration = 0830;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -367,21 +359,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		48A83C75C3C559C4DEF84CF4 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ceos/Pods-ceos-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		B257A05E1975DAD83FBBF1C6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -406,7 +383,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-ceos/Pods-ceos-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-ceos/Pods-ceos-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Kanna/Kanna.framework",
 				"${BUILT_PRODUCTS_DIR}/MBProgressHUD/MBProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
@@ -419,7 +396,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ceos/Pods-ceos-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ceos/Pods-ceos-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -438,7 +415,6 @@
 				7BDB89341F3B33BE006A09F1 /* NSString+FGReverser.m in Sources */,
 				7B276F101E77F7BD00FB9EC6 /* Parser.swift in Sources */,
 				7B940BE31F1E09D700845620 /* NovelTitleTableViewCell.swift in Sources */,
-				7B1568FD1FF0F5F7003B971A /* FBAdViewController.swift in Sources */,
 				7BB8A08F1FA25E7D00024FEC /* DZMReadView.swift in Sources */,
 				7B1568FB1FF0EC3D003B971A /* ReadViewController.swift in Sources */,
 				7B940BE91F20A9A700845620 /* SearchViewController.swift in Sources */,
@@ -446,7 +422,6 @@
 				7B940BDF1F1CB16800845620 /* TypeViewController.swift in Sources */,
 				7BD535961F43021100BEA21A /* HttpRequestTools.swift in Sources */,
 				7B3548AF1E7FA79800581090 /* MyViewController.swift in Sources */,
-				7B060F771FEBA77000769A9F /* FbAdTableViewCell.swift in Sources */,
 				7B940BE51F1F259800845620 /* ContentViewController.swift in Sources */,
 				7B8B07A71F1CA4BC0017E9A2 /* NiceTableViewCell.swift in Sources */,
 				7B3548AD1E7F948600581090 /* FindViewController.swift in Sources */,
@@ -593,9 +568,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = QLE2M232BK;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -627,7 +602,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Wei shih-yen (QLE2M232BK)";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = QLE2M232BK;
 				ENABLE_BITCODE = NO;
@@ -645,7 +620,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "All Adhoc";
 				SWIFT_OBJC_BRIDGING_HEADER = "ceos/ceos-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

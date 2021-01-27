@@ -1,6 +1,4 @@
 PODS:
-  - FBAudienceNetwork (4.99.0)
-  - Google-Mobile-Ads-SDK (7.20.0)
   - Kanna (4.0.0)
   - MBProgressHUD (1.0.0)
   - SDWebImage (3.8.2):
@@ -8,19 +6,21 @@ PODS:
   - SDWebImage/Core (3.8.2)
 
 DEPENDENCIES:
-  - FBAudienceNetwork
-  - Google-Mobile-Ads-SDK
   - Kanna
   - MBProgressHUD
   - SDWebImage
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Kanna
+    - MBProgressHUD
+    - SDWebImage
+
 SPEC CHECKSUMS:
-  FBAudienceNetwork: 80275c0a28574ff5ce820abdc251d05e07e6ae7a
-  Google-Mobile-Ads-SDK: 168312cdc167fa22746d4ea8e839fc4825dd2966
   Kanna: d5ae2a26472f7e7a474e7f36a9cd8aa2c8c63ad3
   MBProgressHUD: 4890f671c94e8a0f3cf959aa731e9de2f036d71a
   SDWebImage: 098e97e6176540799c27e804c96653ee0833d13c
 
-PODFILE CHECKSUM: 2ab38e7fbd650ee26f983afd5dd759d3d18155de
+PODFILE CHECKSUM: 81df158c1056cb7d4b84db723075711bffe43e9b
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.10.1

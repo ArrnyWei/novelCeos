@@ -8,9 +8,8 @@
 
 import UIKit
 import SDWebImage
-import FBAudienceNetwork
 
-class TypeViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,FBAdViewDelegate {
+class TypeViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
 
     @IBOutlet weak var listTableView: UITableView!
     var listArray = NSMutableArray();
@@ -39,9 +38,6 @@ class TypeViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     var typeString = "";
     var selectDic = NSMutableDictionary();
-    var adView:FBAdView?;
-    var adView2:FBAdView?;
-    var adView3:FBAdView?;
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -52,30 +48,8 @@ class TypeViewController: UIViewController,UITableViewDataSource,UITableViewDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
-//        appdelegate.viewController?.navigationItem.leftBarButtonItem = appdelegate.viewController?.backItem;
-//        appdelegate.viewController?.navigationItem.setHidesBackButton(false, animated: true);
         
         getList();
-        
-        if appdelegate.fbAdCanOpen == true {
-            adView = FBAdView(placementID: "156413368451300_156439721781998", adSize: kFBAdSizeHeight250Rectangle, rootViewController: self)
-            
-            adView!.frame = CGRect(x: 0, y: 0, width: (listTableView.frame.size.width), height: 250);
-            adView!.delegate = self;
-            adView!.loadAd();
-            
-            adView2 = FBAdView(placementID: "156413368451300_178250299600940", adSize: kFBAdSizeHeight250Rectangle, rootViewController: self)
-            
-            adView2!.frame = CGRect(x: 0, y: 0, width: (listTableView.frame.size.width), height: 250);
-            adView2!.delegate = self;
-            adView2!.loadAd();
-            
-            adView3 = FBAdView(placementID: "156413368451300_178250962934207", adSize: kFBAdSizeHeight250Rectangle, rootViewController: self)
-            
-            adView3!.frame = CGRect(x: 0, y: 0, width: (listTableView.frame.size.width), height: 250);
-            adView3!.delegate = self;
-            adView3!.loadAd();
-        }
     }
     
     func getList() {
@@ -101,181 +75,45 @@ class TypeViewController: UIViewController,UITableViewDataSource,UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if appdelegate.fbAdCanOpen == true {
-            if indexPath.row < 11 {
-                if indexPath.row % 5 != 0 && indexPath.row != 0 {
-                    return 150;
-                }
-                else {
-                    return 250;
-                }
-            }
-            else {
-                return 150;
-            }
-            
-        }
-        else {
-            return 150
-        }
+        return 150
         
     }
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if appdelegate.fbAdCanOpen == true {
-            if indexPath.row < 11 {
-                if indexPath.row % 5 != 0 && indexPath.row != 0 {
-                    let index = indexPath.row - (indexPath.row / 5) - 1
-                    selectDic = listArray[index] as! NSMutableDictionary;
-                    performSegue(withIdentifier: "typeToNovel", sender: nil);
-                }
-            }
-            else {
-                let index = indexPath.row - 3
-                selectDic = listArray[index] as! NSMutableDictionary;
-                performSegue(withIdentifier: "typeToNovel", sender: nil);
-            }
-            
-        }
-        else{
-            selectDic = listArray[indexPath.row] as! NSMutableDictionary;
-            performSegue(withIdentifier: "typeToNovel", sender: nil);
-        }
+        selectDic = listArray[indexPath.row] as! NSMutableDictionary;
+        performSegue(withIdentifier: "typeToNovel", sender: nil);
         
     }
     
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if appdelegate.fbAdCanOpen == true {
-            if indexPath.row < 11 {
-                if indexPath.row == 0 {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "FbAdTableVIewCell")
-                    
-                    
-                    cell?.contentView.addSubview(adView!)
-                    
-                    return cell!;
-                }
-                else if indexPath.row == 5{
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "FbAdTableVIewCell")
-                    
-                    
-                    cell?.contentView.addSubview(adView2!)
-                    
-                    return cell!;
-                }
-                else if indexPath.row == 10{
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "FbAdTableVIewCell")
-                    
-                    
-                    cell?.contentView.addSubview(adView3!)
-                    
-                    return cell!;
-                }
-                else {
-                    
-                    //            let index = (indexPath.row / 8 ) * 8 + indexPath.row % 8
-                    let index = indexPath.row - (indexPath.row / 5) - 1
-                    
-                    
-                    let tempDic = listArray[index] as! NSDictionary;
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "HotTableViewCell")
-                    let imageView = cell?.viewWithTag(101) as! UIImageView;
-                    //            imageView.sd_setImage(with: URL(string: tempDic["image"] as! String)!);
-                    //        imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
-                    if (tempDic["image"] as! String).contains("http")  {
-                        imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
-                    }
-                    else {
-                        imageView.sd_setImage(with: URL(string: "https:\(tempDic["image"] as! String)"), placeholderImage: UIImage(named: "fengmian")!)
-                    }
-                    
-                    let titleLabel = cell?.viewWithTag(102) as! UILabel;
-                    titleLabel.text = tempDic["title"] as? String;
-                    
-                    let authorLabel = cell?.viewWithTag(103) as! UILabel;
-                    authorLabel.text = tempDic["author"] as? String
-                    
-                    let descLabel = cell?.viewWithTag(104) as! UILabel;
-                    descLabel.text = tempDic["desc"] as? String
-                    return cell!;
-                }
-            }
-            else {
-                let index = indexPath.row - 3
-                
-                
-                let tempDic = listArray[index] as! NSDictionary;
-                let cell = tableView.dequeueReusableCell(withIdentifier: "HotTableViewCell")
-                let imageView = cell?.viewWithTag(101) as! UIImageView;
-                //            imageView.sd_setImage(with: URL(string: tempDic["image"] as! String)!);
-                //        imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
-                if (tempDic["image"] as! String).contains("http") {
-                    imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
-                }
-                else {
-                    imageView.sd_setImage(with: URL(string: "https:\(tempDic["image"] as! String)"), placeholderImage: UIImage(named: "fengmian")!)
-                }
-                
-                let titleLabel = cell?.viewWithTag(102) as! UILabel;
-                titleLabel.text = tempDic["title"] as? String;
-                
-                let authorLabel = cell?.viewWithTag(103) as! UILabel;
-                authorLabel.text = tempDic["author"] as? String
-                
-                let descLabel = cell?.viewWithTag(104) as! UILabel;
-                descLabel.text = tempDic["desc"] as? String
-                return cell!;
-            }
-            
+        let index = indexPath.row
+        
+        
+        let tempDic = listArray[index] as! NSDictionary;
+        let cell = tableView.dequeueReusableCell(withIdentifier: "HotTableViewCell")
+        let imageView = cell?.viewWithTag(101) as! UIImageView;
+        //            imageView.sd_setImage(with: URL(string: tempDic["image"] as! String)!);
+        //        imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
+        if (tempDic["image"] as! String).contains("http") {
+            imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
         }
-        else{
-            let index = indexPath.row
-            
-            
-            let tempDic = listArray[index] as! NSDictionary;
-            let cell = tableView.dequeueReusableCell(withIdentifier: "HotTableViewCell")
-            let imageView = cell?.viewWithTag(101) as! UIImageView;
-            //            imageView.sd_setImage(with: URL(string: tempDic["image"] as! String)!);
-            //        imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
-            if (tempDic["image"] as! String).contains("http") {
-                imageView.sd_setImage(with: URL(string: tempDic["image"] as! String), placeholderImage: UIImage(named: "fengmian")!)
-            }
-            else {
-                imageView.sd_setImage(with: URL(string: "https:\(tempDic["image"] as! String)"), placeholderImage: UIImage(named: "fengmian")!)
-            }
-            
-            let titleLabel = cell?.viewWithTag(102) as! UILabel;
-            titleLabel.text = tempDic["title"] as? String;
-            
-            let authorLabel = cell?.viewWithTag(103) as! UILabel;
-            authorLabel.text = tempDic["author"] as? String
-            
-            let descLabel = cell?.viewWithTag(104) as! UILabel;
-            descLabel.text = tempDic["desc"] as? String
-            return cell!;
+        else {
+            imageView.sd_setImage(with: URL(string: "https:\(tempDic["image"] as! String)"), placeholderImage: UIImage(named: "fengmian")!)
         }
         
+        let titleLabel = cell?.viewWithTag(102) as! UILabel;
+        titleLabel.text = tempDic["title"] as? String;
         
+        let authorLabel = cell?.viewWithTag(103) as! UILabel;
+        authorLabel.text = tempDic["author"] as? String
         
-        
+        let descLabel = cell?.viewWithTag(104) as! UILabel;
+        descLabel.text = tempDic["desc"] as? String
+        return cell!;
     }
-    func adViewDidFinishHandlingClick(_ adView: FBAdView) {
-        print("fibnish")
-    }
-    func adViewDidClick(_ adView: FBAdView) {
-        print("add did click")
-    }
-    
-    func adViewDidLoad(_ adView: FBAdView) {
-        print ("adview Load")
-    }
-    func adView(_ adView: FBAdView, didFailWithError error: Error) {
-        print("load error: \(error)")
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if listArray.count > 0 {
             return listArray.count + 3;

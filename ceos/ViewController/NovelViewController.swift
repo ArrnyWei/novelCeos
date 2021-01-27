@@ -60,7 +60,6 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated);
-//        appdelegate.viewController?.navigationItem.rightBarButtonItem = nil;
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -92,10 +91,7 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
             novelId = "\(sqlite3_column_int(statement, 0))";
         }
         
-//        appdelegate.db.closeDatabase();
-        
         if hasNovel == true {
-//            appdelegate.db.openDatabase();
             queryString = "select * from favNovel Where novelId = \"\(novelId)\"";
             statement = self.appdelegate.db.executeQuery(queryString);
             while (sqlite3_step(statement) == SQLITE_ROW){
@@ -106,13 +102,10 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
                 favListId = "\(sqlite3_column_int(statement, 2))";
                 
             }
-//            appdelegate.db.closeDatabase();
             
             if hasFav == true {
                 novelDic = (appdelegate.viewController?.mainContentDic)!;
                 novelArray = NSMutableArray();
-                
-//                appdelegate.db.openDatabase();
                 
                 var count = 0;
                 var queryString = "select count(*) from list Where novelId = \(novelId)";
@@ -123,7 +116,6 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
 
                 }
                 sqlite3_finalize(statement);
-//                appdelegate.db.closeDatabase();
                 
                 var onlineNovelDic = NSMutableDictionary();
                 if novelUrl.contains("mytxt.cc") || novelUrl.contains("read") {
@@ -330,7 +322,7 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
                         sortItem?.title = "正序"
                     }
                 }
-                
+                appdelegate.db.closeDatabase();
                 DispatchQueue.main.sync {
                     self.reloadUI();
                 }
@@ -370,12 +362,13 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
                 }
             }
             
+            appdelegate.db.closeDatabase();
             DispatchQueue.main.sync {
                 self.reloadUI();
             }
         }
         
-        appdelegate.db.closeDatabase();
+        
     }
     
     func reloadUI(){
@@ -716,7 +709,6 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
             else {
                 cell.titleImageView.sd_setImage(with: URL(string: "https:\(novelDic["image"] as! String)"), placeholderImage: UIImage(named: "fengmian")!)
             }
-//            cell.titleImageView.sd_setImage(with: URL(string: novelDic["image"] as! String)!, placeholderImage: UIImage(named: "fengmian")!);
             cell.titleLabel.text = novelDic["title"] as? String;
             cell.authorLabel.text = "作者：\(novelDic["author"] as! String)";
             cell.descLabel.text = novelDic["desc"] as? String;
@@ -728,7 +720,6 @@ class NovelViewController: UIViewController ,UITableViewDelegate,UITableViewData
             cell.offlineBtn.layer.cornerRadius = 5;
             
             if hasFav == true {
-//                cell.favBtn.setImage(UIImage(named: "favorite"), for: UIControlState.normal);
                 cell.favBtn.setTitle("移除書架", for: UIControl.State.normal);
             }
             else {

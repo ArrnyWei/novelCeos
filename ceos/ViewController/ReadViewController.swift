@@ -15,10 +15,7 @@ class ReadViewController: UIViewController {
     var content = "";
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         // Do any additional setup after loading the view.
-        
-        
     }
     
     func setFrame(_ frame:CGRect) {
@@ -27,9 +24,6 @@ class ReadViewController: UIViewController {
         
         readView.backgroundColor = UIColor.clear;
         readView.attrs = [NSAttributedString.Key.font:UIFont.systemFont(ofSize: appdelegate.textSize),NSAttributedString.Key.foregroundColor:appdelegate.textColor,NSAttributedString.Key.backgroundColor:appdelegate.backColor];
-        
-        
-        
         readView.content = content;
         
         self.view.addSubview(readView);

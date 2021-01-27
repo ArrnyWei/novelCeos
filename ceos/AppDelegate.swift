@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import GoogleMobileAds
-import FBAudienceNetwork
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,20 +26,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var lineSpace:CGFloat = 2;
     var inContent = false;
     var readDirection = "vertical"
-    var fbAdCanOpen = false;
     var serverFrom = 0 ;
 
     internal func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         UIApplication.shared.statusBarStyle = .lightContent;
-        //print(GADRequest.sdkVersion())
+    
         parse.appdelegate = self;
-        GADMobileAds.configure(withApplicationID: "ca-app-pub-6753518483501394~7755844283");
-        
-        FBAdSettings.setLogLevel(FBAdLogLevel.log)
-        FBAdSettings.clearTestDevices()
-//        FBAdSettings.addTestDevice("091ee57d551d20f1939f066a521bbaf953740360");
-//        GADMobileAds.configure(withApplicationID: "ca-app-pub-3940256099942544~1458002511");
         
         if let _ = UserDefaults.standard.value(forKey: "language") as? String {
             languageChoose = UserDefaults.standard.value(forKey: "language") as! String;
@@ -71,9 +62,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             else if UserDefaults.standard.value(forKey: "textColor") as! String == "white" {
                 textColor = UIColor.white;
             }
-            
+
             textSize = CGFloat( UserDefaults.standard.value(forKey: "textSize") as! Float);
-            
+
         }
         else {
             UserDefaults.standard.setValue("zn", forKey: "language");
@@ -95,11 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         else {
             UserDefaults.standard.setValue(lineSpace, forKey: "lineSpace");
         }
-        
-        
-        
-        
-        
+
         db.db_EXT = ".sqlite";
         db.db_NAME = "ceos";
         return true
