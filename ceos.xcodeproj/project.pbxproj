@@ -23,7 +23,6 @@
 		7B8463231F385C6700FABC15 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8463221F385C6700FABC15 /* MessageUI.framework */; };
 		7B8463261F385C6F00FABC15 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8463241F385C6F00FABC15 /* EventKit.framework */; };
 		7B8463271F385C6F00FABC15 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8463251F385C6F00FABC15 /* EventKitUI.framework */; };
-		7B8463291F385C7400FABC15 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8463281F385C7400FABC15 /* StoreKit.framework */; };
 		7B84632B1F385C7C00FABC15 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B84632A1F385C7C00FABC15 /* SystemConfiguration.framework */; };
 		7B8463331F39A2F400FABC15 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8463321F39A2F400FABC15 /* CoreLocation.framework */; };
 		7B8463351F39A2FA00FABC15 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B8463341F39A2FA00FABC15 /* WebKit.framework */; };
@@ -86,7 +85,6 @@
 		7B8463221F385C6700FABC15 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		7B8463241F385C6F00FABC15 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		7B8463251F385C6F00FABC15 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
-		7B8463281F385C7400FABC15 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		7B84632A1F385C7C00FABC15 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		7B8463321F39A2F400FABC15 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		7B8463341F39A2FA00FABC15 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
@@ -137,7 +135,6 @@
 				7B8463351F39A2FA00FABC15 /* WebKit.framework in Frameworks */,
 				7B8463331F39A2F400FABC15 /* CoreLocation.framework in Frameworks */,
 				7B84632B1F385C7C00FABC15 /* SystemConfiguration.framework in Frameworks */,
-				7B8463291F385C7400FABC15 /* StoreKit.framework in Frameworks */,
 				7B8463261F385C6F00FABC15 /* EventKit.framework in Frameworks */,
 				7B8463271F385C6F00FABC15 /* EventKitUI.framework in Frameworks */,
 				7B8463231F385C6700FABC15 /* MessageUI.framework in Frameworks */,
@@ -270,7 +267,6 @@
 				7B8463341F39A2FA00FABC15 /* WebKit.framework */,
 				7B8463321F39A2F400FABC15 /* CoreLocation.framework */,
 				7B84632A1F385C7C00FABC15 /* SystemConfiguration.framework */,
-				7B8463281F385C7400FABC15 /* StoreKit.framework */,
 				7B8463241F385C6F00FABC15 /* EventKit.framework */,
 				7B8463251F385C6F00FABC15 /* EventKitUI.framework */,
 				7B8463221F385C6700FABC15 /* MessageUI.framework */,
