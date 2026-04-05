@@ -18,7 +18,7 @@ class NovelDetailController extends GetxController {
   var isLoading = true.obs;
   var novelDetail = Rxn<NovelDetailModel>();
   var isFavorited = false.obs;
-  var sortAscending = true.obs;
+  var sortAscending = false.obs;
   var errorMessage = ''.obs;
   var downloadedListIds = <int>{}.obs;
   var lastReadChapterIndex = 0.obs;

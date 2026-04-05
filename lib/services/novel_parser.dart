@@ -121,8 +121,8 @@ class NovelParser {
             })
             .toList();
 
-    // Reverse to match Swift behaviour (oldest chapter first)
-    final chapters = rawChapters.reversed.toList();
+    // Keep source order — sorting is handled by the UI layer
+    final chapters = rawChapters;
 
     return NovelDetailModel(
       title: title,

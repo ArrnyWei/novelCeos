@@ -14,11 +14,30 @@ class AdBannerWidget extends StatefulWidget {
 class _AdBannerWidgetState extends State<AdBannerWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
+  Worker? _sdkReadyWorker;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _loadAd();
+    _waitForSdkAndLoad();
+  }
+
+  void _waitForSdkAndLoad() {
+    final adService = Get.isRegistered<AdService>() ? Get.find<AdService>() : null;
+    if (adService == null || !adService.adsEnabled) return;
+
+    if (adService.isAdSdkReady.value) {
+      _loadAd();
+    } else {
+      _sdkReadyWorker?.dispose();
+      _sdkReadyWorker = ever(adService.isAdSdkReady, (ready) {
+        if (ready) {
+          _sdkReadyWorker?.dispose();
+          _sdkReadyWorker = null;
+          _loadAd();
+        }
+      });
+    }
   }
 
   Future<void> _loadAd() async {
@@ -50,6 +69,7 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
 
   @override
   void dispose() {
+    _sdkReadyWorker?.dispose();
     _bannerAd?.dispose();
     super.dispose();
   }

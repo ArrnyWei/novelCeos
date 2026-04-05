@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'subscription_service.dart';
@@ -28,6 +29,9 @@ class AdService extends GetxService {
   InterstitialAd? _interstitialAd;
   bool _isInterstitialReady = false;
 
+  /// Whether MobileAds SDK has been initialized
+  final isAdSdkReady = false.obs;
+
   bool get adsEnabled {
     if (!Get.isRegistered<SubscriptionService>()) return true;
     return !Get.find<SubscriptionService>().isSubscribed.value;
@@ -36,7 +40,22 @@ class AdService extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    MobileAds.instance.initialize();
+    _initAdsWithTracking();
+  }
+
+  Future<void> _initAdsWithTracking() async {
+    // On iOS, request ATT permission before initializing ads
+    if (Platform.isIOS) {
+      try {
+        // Wait for app to be in foreground (required for ATT dialog)
+        await Future.delayed(const Duration(seconds: 1));
+        await AppTrackingTransparency.requestTrackingAuthorization();
+      } catch (_) {
+        // ATT may fail on some devices/simulators — continue with ad init
+      }
+    }
+    await MobileAds.instance.initialize();
+    isAdSdkReady.value = true;
     _loadInterstitial();
   }
 
