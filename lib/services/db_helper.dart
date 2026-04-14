@@ -126,6 +126,12 @@ class DBHelper {
     );
   }
 
+  /// Delete all cached chapter content. Used by the settings "clear cache" action.
+  Future<int> clearAllContent() async {
+    final d = await db;
+    return d.delete('content');
+  }
+
   Future<String?> getOfflineContent(int listId) async {
     final d = await db;
     final rows =

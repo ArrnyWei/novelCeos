@@ -55,8 +55,11 @@ class HomePage extends StatelessWidget {
               ),
             );
           }
-          return SingleChildScrollView(
+          return RefreshIndicator(
+            onRefresh: controller.fetchHome,
+            child: SingleChildScrollView(
             controller: controller.scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +87,7 @@ class HomePage extends StatelessWidget {
                 SizedBox(height: 16.h),
                 _NewNovelList(novels: controller.newNovels),
               ],
+            ),
             ),
           );
         }),

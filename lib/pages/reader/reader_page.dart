@@ -100,8 +100,11 @@ class ReaderPage extends StatelessWidget {
                               final screenWidth =
                                   MediaQuery.of(context).size.width;
                               final x = details.globalPosition.dx;
-                              if (x > screenWidth / 3 &&
-                                  x < screenWidth * 2 / 3) {
+                              if (x < screenWidth / 3) {
+                                if (ctrl.hasPrev) ctrl.prevChapter();
+                              } else if (x > screenWidth * 2 / 3) {
+                                if (ctrl.hasNext) ctrl.nextChapter();
+                              } else {
                                 ctrl.showSettingsOverlay.toggle();
                               }
                             },

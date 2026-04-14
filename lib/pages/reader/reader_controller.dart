@@ -31,6 +31,9 @@ class ReaderController extends GetxController {
 
   Map<String, int> _chapterIdMap = {};
 
+  /// In-memory preload cache keyed by chapter index → (title, content).
+  final Map<int, (String, String)> _preloadCache = {};
+
   List<ChapterModel> get chapters => novelDetail.value?.chapters ?? [];
 
   @override
@@ -92,44 +95,69 @@ class ReaderController extends GetxController {
     isLoadingContent.value = true;
     errorMessage.value = '';
     try {
-      final chapter = chapters[index];
-      String content = '';
-      String title = chapter.title;
-
-      // Try offline content first
-      final listId = _chapterIdMap[chapter.url];
-      if (listId != null) {
-        final offline = await _db.getOfflineContent(listId);
-        if (offline != null) {
-          content = offline;
-        }
+      // Preload cache hit — instant display, no spinner flicker.
+      final cached = _preloadCache.remove(index);
+      if (cached != null) {
+        currentChapterIndex.value = index;
+        chapterTitle.value = cached.$1;
+        chapterContent.value = cached.$2;
+        _schedulePreloadNext(index);
+        return;
       }
 
-      // Fallback to network
-      if (content.isEmpty) {
-        final result = await _service.getContent(chapter.url);
-        content = result.content;
-        if (result.title.isNotEmpty) title = result.title;
-        // Auto-save to DB for offline access
-        if (listId != null && content.isNotEmpty) {
-          await _db.insertContent(listId, result.content);
-        }
-      }
-
-      // Apply Chinese conversion
-      if (_settings.chineseVariant.value == 'simplified') {
-        content = ChineseConverter.toSimplified(content);
-        title = ChineseConverter.toSimplified(title);
-      }
-
+      final (title, content) = await _fetchChapter(index);
       currentChapterIndex.value = index;
       chapterTitle.value = title;
       chapterContent.value = content;
+      _schedulePreloadNext(index);
     } catch (e) {
       errorMessage.value = '載入章節失敗：$e';
     } finally {
       isLoadingContent.value = false;
     }
+  }
+
+  /// Fetch a chapter (offline first, network fallback) and apply variant conversion.
+  Future<(String, String)> _fetchChapter(int index) async {
+    final chapter = chapters[index];
+    String content = '';
+    String title = chapter.title;
+
+    final listId = _chapterIdMap[chapter.url];
+    if (listId != null) {
+      final offline = await _db.getOfflineContent(listId);
+      if (offline != null) content = offline;
+    }
+
+    if (content.isEmpty) {
+      final result = await _service.getContent(chapter.url);
+      content = result.content;
+      if (result.title.isNotEmpty) title = result.title;
+      if (listId != null && content.isNotEmpty) {
+        await _db.insertContent(listId, result.content);
+      }
+    }
+
+    if (_settings.chineseVariant.value == 'simplified') {
+      content = ChineseConverter.toSimplified(content);
+      title = ChineseConverter.toSimplified(title);
+    }
+    return (title, content);
+  }
+
+  /// Fire-and-forget preload of the next chapter into memory.
+  void _schedulePreloadNext(int currentIndex) {
+    final nextIndex = currentIndex + 1;
+    if (nextIndex >= chapters.length) return;
+    if (_preloadCache.containsKey(nextIndex)) return;
+    Future<void>(() async {
+      try {
+        final result = await _fetchChapter(nextIndex);
+        _preloadCache[nextIndex] = result;
+      } catch (_) {
+        // Silent — preload failure shouldn't disturb the reader.
+      }
+    });
   }
 
   void nextChapter() {

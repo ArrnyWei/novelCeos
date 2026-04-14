@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../services/db_helper.dart';
 import '../../services/reading_settings_service.dart';
 import '../../services/subscription_service.dart';
 import 'legal_page.dart';
@@ -207,27 +209,7 @@ class SettingsPage extends StatelessWidget {
               icon: Icons.storage,
               title: '清除快取',
               subtitle: '釋放儲存空間',
-              onTap: () {
-                Get.dialog(
-                  AlertDialog(
-                    title: const Text('清除快取'),
-                    content: const Text('確定要清除所有快取嗎?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Get.back(),
-                        child: const Text('取消'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Get.back();
-                          Get.snackbar('成功', '快取已清除');
-                        },
-                        child: const Text('確定'),
-                      ),
-                    ],
-                  ),
-                );
-              },
+              onTap: () => _confirmClearCache(),
             ),
 
             SizedBox(height: 24.h),
@@ -256,7 +238,7 @@ class SettingsPage extends StatelessWidget {
 
             Center(
               child: Text(
-                'Version 1.1.0',
+                'Version 1.2.0',
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey),
               ),
             ),
@@ -264,6 +246,33 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmClearCache() async {
+    final confirmed = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('清除快取'),
+        content: const Text('將會刪除所有已下載的章節內容與圖片快取，確定嗎？'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child: const Text('確定'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      final deleted = await DBHelper.instance.clearAllContent();
+      await DefaultCacheManager().emptyCache();
+      Get.snackbar('完成', '已清除 $deleted 章離線內容與圖片快取');
+    } catch (e) {
+      Get.snackbar('失敗', '清除快取時發生錯誤：$e');
+    }
   }
 
   void _showFontSizeDialog(ReadingSettingsService settings) {
