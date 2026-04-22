@@ -56,7 +56,47 @@ class ReadingSettingsOverlay extends StatelessWidget {
                   child: Obx(() => Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Chapter navigation
+                          // Chapter progress + slider
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 4.w),
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '第 ${ctrl.currentChapterIndex.value + 1} / 共 ${ctrl.chapters.length} 章',
+                                  style: TextStyle(fontSize: 13.sp),
+                                ),
+                                Obx(() => Text(
+                                      '${(ctrl.scrollProgress.value * 100).toStringAsFixed(0)}%',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant,
+                                      ),
+                                    )),
+                              ],
+                            ),
+                          ),
+                          if (ctrl.chapters.length > 1)
+                            Obx(() => Slider(
+                                  value: ctrl.sliderChapterIndex.value,
+                                  min: 0,
+                                  max: (ctrl.chapters.length - 1).toDouble(),
+                                  divisions: ctrl.chapters.length - 1,
+                                  label:
+                                      '第 ${ctrl.sliderChapterIndex.value.round() + 1} 章',
+                                  onChanged: (v) =>
+                                      ctrl.sliderChapterIndex.value = v,
+                                  onChangeEnd: (v) {
+                                    final newIndex = v.round();
+                                    if (newIndex !=
+                                        ctrl.currentChapterIndex.value) {
+                                      ctrl.loadChapter(newIndex);
+                                    }
+                                  },
+                                )),
                           Row(
                             children: [
                               Expanded(
@@ -166,7 +206,9 @@ class ReadingSettingsOverlay extends StatelessWidget {
                                               ? Theme.of(context)
                                                   .colorScheme
                                                   .primary
-                                              : Colors.grey.withAlpha(80),
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .outlineVariant,
                                           width: selected ? 2.5 : 1,
                                         ),
                                       ),
@@ -203,7 +245,9 @@ class ReadingSettingsOverlay extends StatelessWidget {
                                               ? Theme.of(context)
                                                   .colorScheme
                                                   .primary
-                                              : Colors.grey.withAlpha(80),
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .outlineVariant,
                                           width: selected ? 2.5 : 1,
                                         ),
                                       ),

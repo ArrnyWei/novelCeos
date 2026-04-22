@@ -109,6 +109,7 @@ class ReaderPage extends StatelessWidget {
                               }
                             },
                             child: SingleChildScrollView(
+                              controller: ctrl.scrollController,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 16.w,
                                 vertical: 12.h,
@@ -268,6 +269,10 @@ class _NavBar extends StatelessWidget {
                   icon: const Icon(Icons.chevron_left),
                   label: const Text('上一章'),
                 ),
+              ),
+              Text(
+                '${ctrl.currentChapterIndex.value + 1} / ${ctrl.chapters.length}',
+                style: TextStyle(fontSize: 12.sp, color: Colors.grey),
               ),
               Expanded(
                 child: TextButton.icon(

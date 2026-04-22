@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -28,8 +31,16 @@ class ReaderController extends GetxController {
   var errorMessage = ''.obs;
   var showSettingsOverlay = false.obs;
   var showOnboardingHint = false.obs;
+  var scrollProgress = 0.0.obs;
+  var sliderChapterIndex = 0.0.obs;
 
   Map<String, int> _chapterIdMap = {};
+  int? _dbNovelId;
+
+  final ScrollController scrollController = ScrollController();
+  Timer? _scrollDebounce;
+  int? _savedListId;
+  double _savedOffset = 0.0;
 
   /// In-memory preload cache keyed by chapter index → (title, content).
   final Map<int, (String, String)> _preloadCache = {};
@@ -39,10 +50,48 @@ class ReaderController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    scrollController.addListener(_onScroll);
     if (GetStorage().read<bool>('hasSeenReaderHint') != true) {
       showOnboardingHint.value = true;
     }
     _loadDetail();
+  }
+
+  @override
+  void onClose() {
+    _scrollDebounce?.cancel();
+    _saveProgress();
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void _onScroll() {
+    if (scrollController.hasClients &&
+        scrollController.position.maxScrollExtent > 0) {
+      scrollProgress.value = (scrollController.offset /
+              scrollController.position.maxScrollExtent)
+          .clamp(0.0, 1.0);
+    }
+    _scrollDebounce?.cancel();
+    _scrollDebounce = Timer(const Duration(milliseconds: 200), _saveProgress);
+  }
+
+  Future<void> _saveProgress() async {
+    if (_dbNovelId == null) return;
+    final listId = _currentListId;
+    if (listId == null) return;
+    final offset = scrollController.hasClients ? scrollController.offset : 0.0;
+    await _db.updateReadingProgress(
+      novelId: _dbNovelId!,
+      listId: listId,
+      frame: offset,
+    );
+  }
+
+  int? get _currentListId {
+    final idx = currentChapterIndex.value;
+    if (idx < 0 || idx >= chapters.length) return null;
+    return _chapterIdMap[chapters[idx].url];
   }
 
   void dismissOnboardingHint() {
@@ -56,6 +105,15 @@ class ReaderController extends GetxController {
     try {
       novelDetail.value = await _service.getNovel(novelUrl);
       await _ensureChaptersInDB();
+      if (_dbNovelId != null) {
+        final progress = await _db.getReadingProgress(_dbNovelId!);
+        if (progress != null &&
+            progress.listId != null &&
+            progress.listId! > 0) {
+          _savedListId = progress.listId;
+          _savedOffset = progress.frame;
+        }
+      }
       if (chapters.isNotEmpty) {
         await loadChapter(initialChapterIndex.clamp(0, chapters.length - 1));
       }
@@ -70,7 +128,7 @@ class ReaderController extends GetxController {
     final detail = novelDetail.value;
     if (detail == null) return;
     try {
-      final novelId = await _db.insertNovel(
+      _dbNovelId = await _db.insertNovel(
         NovelModel(
           url: novelUrl,
           imageUrl: detail.imageUrl,
@@ -79,41 +137,70 @@ class ReaderController extends GetxController {
           desc: detail.desc,
         ),
       );
-      var dbChapters = await _db.getChapters(novelId);
+      var dbChapters = await _db.getChapters(_dbNovelId!);
       if (dbChapters.isEmpty && detail.chapters.isNotEmpty) {
-        await _db.insertChapters(novelId, detail.chapters);
-        dbChapters = await _db.getChapters(novelId);
+        await _db.insertChapters(_dbNovelId!, detail.chapters);
+        dbChapters = await _db.getChapters(_dbNovelId!);
       }
       _chapterIdMap = {for (final ch in dbChapters) ch.url: ch.id!};
-    } catch (_) {
-      // Non-critical — reading still works without DB
-    }
+    } catch (_) {}
   }
 
   Future<void> loadChapter(int index) async {
     if (index < 0 || index >= chapters.length) return;
     isLoadingContent.value = true;
     errorMessage.value = '';
+    scrollProgress.value = 0.0;
     try {
-      // Preload cache hit — instant display, no spinner flicker.
+      String title;
+      String content;
+
       final cached = _preloadCache.remove(index);
       if (cached != null) {
-        currentChapterIndex.value = index;
-        chapterTitle.value = cached.$1;
-        chapterContent.value = cached.$2;
-        _schedulePreloadNext(index);
-        return;
+        title = cached.$1;
+        content = cached.$2;
+      } else {
+        (title, content) = await _fetchChapter(index);
       }
 
-      final (title, content) = await _fetchChapter(index);
       currentChapterIndex.value = index;
+      sliderChapterIndex.value = index.toDouble();
       chapterTitle.value = title;
       chapterContent.value = content;
+      isLoadingContent.value = false;
+
       _schedulePreloadNext(index);
+      _restoreOrResetScroll();
+      _saveProgress();
     } catch (e) {
       errorMessage.value = '載入章節失敗：$e';
-    } finally {
       isLoadingContent.value = false;
+    }
+  }
+
+  void _restoreOrResetScroll() {
+    final listId = _currentListId;
+    final shouldRestore =
+        _savedListId != null && listId == _savedListId && _savedOffset > 0;
+
+    if (shouldRestore) {
+      final offset = _savedOffset;
+      _savedListId = null;
+      _savedOffset = 0.0;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollController.hasClients) {
+          final max = scrollController.position.maxScrollExtent;
+          scrollController.jumpTo(offset.clamp(0.0, max));
+        }
+      });
+    } else {
+      _savedListId = null;
+      _savedOffset = 0.0;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollController.hasClients && scrollController.offset != 0) {
+          scrollController.jumpTo(0);
+        }
+      });
     }
   }
 
@@ -154,9 +241,7 @@ class ReaderController extends GetxController {
       try {
         final result = await _fetchChapter(nextIndex);
         _preloadCache[nextIndex] = result;
-      } catch (_) {
-        // Silent — preload failure shouldn't disturb the reader.
-      }
+      } catch (_) {}
     });
   }
 

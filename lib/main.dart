@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return GetMaterialApp(
-          title: '小說閱讀器',
+          title: '漫遊小說',
           debugShowCheckedModeBanner: false,
           theme: MaterialTheme(
             GoogleFonts.notoSansTextTheme(),
