@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../models/chapter_model.dart';
+import '../models/continue_reading_info.dart';
 import '../models/favorite_model.dart';
 import '../models/novel_model.dart';
 
@@ -220,5 +221,48 @@ class DBHelper {
         where: 'novelId = ?', whereArgs: [novelId]);
     if (rows.isEmpty) return null;
     return FavoriteModel.fromMap(rows.first);
+  }
+
+  /// 取出「最近一次更新（加入書架或閱讀進度寫入）」的收藏小說摘要。
+  /// 章節序號透過 list 表中該 novelId 的 id 排序計算（1-based），
+  /// 用 (id <= savedListId) 的 count 推得。
+  Future<ContinueReadingInfo?> getContinueReading() async {
+    final d = await db;
+    final rows = await d.rawQuery('''
+      SELECT
+        favNovel.listId AS savedListId,
+        novel.title AS title,
+        novel.imageUrl AS imageUrl,
+        novel.url AS url,
+        list.name AS lastChapterName,
+        (SELECT COUNT(*) FROM list l2
+           WHERE l2.novelId = favNovel.novelId
+             AND l2.id <= favNovel.listId) AS chapterPos,
+        (SELECT COUNT(*) FROM list l3
+           WHERE l3.novelId = favNovel.novelId) AS totalChapters
+      FROM favNovel
+      INNER JOIN novel ON novel.id = favNovel.novelId
+      LEFT JOIN list ON list.id = favNovel.listId
+      ORDER BY favNovel.date DESC
+      LIMIT 1
+    ''');
+    if (rows.isEmpty) return null;
+    final r = rows.first;
+    final url = r['url'] as String?;
+    final title = r['title'] as String?;
+    if (url == null || title == null) return null;
+    final savedListId = (r['savedListId'] as int?) ?? 0;
+    final pos = (r['chapterPos'] as int?) ?? 0;
+    final total = (r['totalChapters'] as int?) ?? 0;
+    final hasStarted = savedListId > 0 && pos > 0;
+    return ContinueReadingInfo(
+      novelUrl: url,
+      title: title,
+      imageUrl: r['imageUrl'] as String?,
+      chapterIndex: hasStarted ? pos - 1 : 0,
+      totalChapters: total,
+      lastChapterName: r['lastChapterName'] as String?,
+      hasStarted: hasStarted,
+    );
   }
 }

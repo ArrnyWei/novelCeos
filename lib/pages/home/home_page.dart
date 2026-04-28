@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../models/novel_model.dart';
 import '../../widgets/ad_banner_widget.dart';
+import '../../widgets/continue_reading_card.dart';
 import '../category/category_controller.dart';
 import '../category/category_page.dart';
 import '../novel_detail/novel_detail_page.dart';
@@ -64,6 +65,14 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Obx(() {
+                  final info = controller.continueReading.value;
+                  if (info == null) return const SizedBox.shrink();
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 16.h),
+                    child: ContinueReadingCard(info: info),
+                  );
+                }),
                 const _SearchBar(),
                 SizedBox(height: 20.h),
                 Text(

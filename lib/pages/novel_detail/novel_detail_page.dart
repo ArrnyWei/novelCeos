@@ -20,7 +20,29 @@ class NovelDetailPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('小說詳情'),
+        title: Obx(() {
+          if (!ctrl.isSearching.value) return const Text('小說詳情');
+          return TextField(
+            controller: ctrl.searchTextController,
+            autofocus: true,
+            textInputAction: TextInputAction.search,
+            onChanged: ctrl.onSearchChanged,
+            style: TextStyle(fontSize: 16.sp),
+            decoration: InputDecoration(
+              hintText: '搜尋章節 / 第 N 章',
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 8.h),
+            ),
+          );
+        }),
+        actions: [
+          Obx(() => IconButton(
+                tooltip: ctrl.isSearching.value ? '關閉搜尋' : '搜尋章節',
+                icon: Icon(ctrl.isSearching.value ? Icons.close : Icons.search),
+                onPressed: ctrl.toggleSearch,
+              )),
+        ],
       ),
       body: Obx(() {
         if (ctrl.isLoading.value) {
@@ -53,18 +75,35 @@ class NovelDetailPage extends StatelessWidget {
             // Header
             _Header(ctrl: ctrl, detail: detail),
             const Divider(height: 1),
-            // Chapter list header
-            _ChapterListHeader(ctrl: ctrl, count: detail.chapters.length),
+            // Chapter list header — count 反映搜尋過濾後筆數
+            Obx(() => _ChapterListHeader(
+                  ctrl: ctrl,
+                  count: ctrl.chapters.length,
+                  total: detail.chapters.length,
+                )),
             // Chapter list
             Expanded(
               child: Obx(() {
                 final chapters = ctrl.chapters;
+                if (chapters.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.w),
+                      child: Text(
+                        '找不到符合「${ctrl.searchQuery.value}」的章節',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  );
+                }
                 return ListView.builder(
                   itemCount: chapters.length,
                   itemBuilder: (_, i) {
-                    final realIndex = ctrl.sortAscending.value
-                        ? i
-                        : detail.chapters.length - 1 - i;
+                    final chapter = chapters[i];
+                    final realIndex = ctrl.realIndexFor(chapter);
                     final listId = ctrl.dbListIdForChapter(realIndex);
                     return ListTile(
                       dense: true,
@@ -256,16 +295,22 @@ class _Header extends StatelessWidget {
 class _ChapterListHeader extends StatelessWidget {
   final NovelDetailController ctrl;
   final int count;
-  const _ChapterListHeader({required this.ctrl, required this.count});
+  final int total;
+  const _ChapterListHeader({
+    required this.ctrl,
+    required this.count,
+    required this.total,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isFiltered = count != total;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Row(
         children: [
           Text(
-            '章節列表 ($count)',
+            isFiltered ? '章節列表 ($count / $total)' : '章節列表 ($total)',
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
           ),
           const Spacer(),
