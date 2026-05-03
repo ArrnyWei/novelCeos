@@ -24,7 +24,7 @@ class DBHelper {
     final dbPath = await getDatabasesPath();
     return openDatabase(
       '$dbPath/ceos.db',
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS novel (
@@ -56,9 +56,18 @@ class DBHelper {
             novelId INTEGER,
             listId INTEGER,
             frame REAL DEFAULT 0,
-            date TEXT
+            date TEXT,
+            status INTEGER NOT NULL DEFAULT 0
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // v1 → v2：favNovel 加上閱讀狀態
+          await db.execute(
+            'ALTER TABLE favNovel ADD COLUMN status INTEGER NOT NULL DEFAULT 0',
+          );
+        }
       },
     );
   }
@@ -176,7 +185,19 @@ class DBHelper {
       'listId': 0,
       'frame': 0.0,
       'date': DateTime.now().toIso8601String(),
+      'status': 0,
     });
+  }
+
+  /// 更新某本收藏小說的閱讀狀態（B1）。不動 date / progress。
+  Future<void> updateFavoriteStatus(int novelId, int statusValue) async {
+    final d = await db;
+    await d.update(
+      'favNovel',
+      {'status': statusValue},
+      where: 'novelId = ?',
+      whereArgs: [novelId],
+    );
   }
 
   Future<void> removeFavorite(int novelId) async {

@@ -1,9 +1,12 @@
+import 'reading_status.dart';
+
 class FavoriteModel {
   final int? id;
   final int novelId;
   final int? listId;
   final double frame;
   final String date;
+  final ReadingStatus status;
 
   // Joined fields (from novel table)
   final String? title;
@@ -18,6 +21,7 @@ class FavoriteModel {
     this.listId,
     this.frame = 0.0,
     required this.date,
+    this.status = ReadingStatus.reading,
     this.title,
     this.author,
     this.imageUrl,
@@ -31,6 +35,7 @@ class FavoriteModel {
         'listId': listId,
         'frame': frame,
         'date': date,
+        'status': status.dbValue,
       };
 
   factory FavoriteModel.fromMap(Map<String, dynamic> map) => FavoriteModel(
@@ -39,6 +44,7 @@ class FavoriteModel {
         listId: map['listId'] as int?,
         frame: (map['frame'] as num?)?.toDouble() ?? 0.0,
         date: map['date'] as String? ?? '',
+        status: ReadingStatus.fromDb(map['status'] as int?),
         title: map['title'] as String?,
         author: map['author'] as String?,
         imageUrl: map['imageUrl'] as String?,

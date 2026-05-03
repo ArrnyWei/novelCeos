@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import '../widgets/subscription_prompt_sheet.dart';
+import 'subscription_prompt_service.dart';
 import 'subscription_service.dart';
 
 class AdService extends GetxService {
@@ -75,6 +79,7 @@ class AdService extends GetxService {
               _interstitialAd = null;
               _isInterstitialReady = false;
               _loadInterstitial(); // pre-load next one
+              _maybeShowSubscriptionPrompt();
             },
             onAdFailedToShowFullScreenContent: (ad, _) {
               ad.dispose();
@@ -128,6 +133,24 @@ class AdService extends GetxService {
       _chapterChangedCount = 0;
       _showInterstitial();
     }
+  }
+
+  /// 廣告關閉後，視情況彈出訂閱導流 prompt。
+  /// 條件全部由 [SubscriptionPromptService] 把關（已訂閱 / 靜音 / 計數）。
+  Future<void> _maybeShowSubscriptionPrompt() async {
+    if (!Get.isRegistered<SubscriptionPromptService>()) return;
+    final shouldShow =
+        await Get.find<SubscriptionPromptService>().onInterstitialDismissed();
+    if (!shouldShow) return;
+    // post-frame：避免廣告 dismiss callback 還在 navigator stack 動作中時就推 sheet
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = Get.context;
+      if (ctx == null) return;
+      showSubscriptionPromptSheet(
+        ctx,
+        trigger: SubscriptionPromptTrigger.adDismissed,
+      );
+    });
   }
 
   @override

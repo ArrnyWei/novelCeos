@@ -5,12 +5,33 @@ import '../pages/home/home_page.dart';
 import '../pages/library/library_controller.dart';
 import '../pages/library/library_page.dart';
 import '../pages/settings/settings_page.dart';
+import '../services/subscription_prompt_service.dart';
+import 'subscription_prompt_sheet.dart';
 
 class MainTabController extends GetxController {
   var currentIndex = 0.obs;
 
   int _lastTappedIndex = -1;
   DateTime? _lastTapTime;
+
+  @override
+  void onReady() {
+    super.onReady();
+    _maybeShowLaunchPrompt();
+  }
+
+  Future<void> _maybeShowLaunchPrompt() async {
+    if (!Get.isRegistered<SubscriptionPromptService>()) return;
+    final svc = Get.find<SubscriptionPromptService>();
+    final shouldShow = await svc.shouldShowLaunchPrompt();
+    if (!shouldShow) return;
+    final ctx = Get.context;
+    if (ctx == null || !ctx.mounted) return;
+    showSubscriptionPromptSheet(
+      ctx,
+      trigger: SubscriptionPromptTrigger.launch,
+    );
+  }
 
   void changeTab(int index) {
     if (_lastTappedIndex == index && _lastTapTime != null) {

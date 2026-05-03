@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/ad_service.dart';
+import 'remove_ads_chip.dart';
 
 /// Adaptive banner ad. Returns SizedBox.shrink() for subscribed users.
 class AdBannerWidget extends StatefulWidget {
@@ -82,10 +83,16 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
 
     return SafeArea(
       top: false,
-      child: SizedBox(
-        width: _bannerAd!.size.width.toDouble(),
-        height: _bannerAd!.size.height.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const RemoveAdsChip(),
+          SizedBox(
+            width: _bannerAd!.size.width.toDouble(),
+            height: _bannerAd!.size.height.toDouble(),
+            child: AdWidget(ad: _bannerAd!),
+          ),
+        ],
       ),
     );
   }
