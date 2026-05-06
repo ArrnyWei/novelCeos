@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../models/reading_theme.dart';
 import '../../services/reading_settings_service.dart';
 import '../../widgets/paginated_text.dart';
 import '../../widgets/reading_settings_overlay.dart';
@@ -48,10 +50,14 @@ class _HorizontalReaderPageState extends State<HorizontalReaderPage> {
         MediaQuery.of(context).padding.bottom -
         60; // nav bar space
 
-    final style = TextStyle(
-      fontSize: settings.fontSize.value,
-      height: settings.lineSpacing.value,
-      color: Color(settings.textColor.value),
+    final font = ReadingFont.findById(settings.fontFamilyId.value);
+    final style = GoogleFonts.getFont(
+      font.googleFontName,
+      textStyle: TextStyle(
+        fontSize: settings.fontSize.value,
+        height: settings.lineSpacing.value,
+        color: Color(settings.textColor.value),
+      ),
     );
 
     final pages =
@@ -108,10 +114,14 @@ class _HorizontalReaderPageState extends State<HorizontalReaderPage> {
     return Obx(() {
       final bgColor = Color(settings.backgroundColor.value);
       final txtColor = Color(settings.textColor.value);
-      final style = TextStyle(
-        fontSize: settings.fontSize.value,
-        height: settings.lineSpacing.value,
-        color: txtColor,
+      final font = ReadingFont.findById(settings.fontFamilyId.value);
+      final style = GoogleFonts.getFont(
+        font.googleFontName,
+        textStyle: TextStyle(
+          fontSize: settings.fontSize.value,
+          height: settings.lineSpacing.value,
+          color: txtColor,
+        ),
       );
 
       // Re-paginate when settings change

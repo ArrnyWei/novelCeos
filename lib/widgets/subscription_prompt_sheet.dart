@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../pages/settings/subscription_page.dart';
 import '../services/subscription_prompt_service.dart';
+import '../services/subscription_service.dart';
 
 /// 訂閱導流的 modal bottom sheet。
 ///
@@ -51,6 +52,9 @@ class _PromptSheetBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    // 有免費試用 offer 時，CTA 主打「7 天試用」鉤子；無則維持「查看方案」
+    final hasTrial = Get.isRegistered<SubscriptionService>() &&
+        Get.find<SubscriptionService>().hasFreeTrialOffer.value;
 
     return SafeArea(
       child: Padding(
@@ -65,7 +69,7 @@ class _PromptSheetBody extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
             Text(
-              '升級 Premium，完全去除廣告',
+              hasTrial ? '先免費試 7 天，再決定要不要付' : '升級 Premium，完全去除廣告',
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -102,7 +106,7 @@ class _PromptSheetBody extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  '查看方案',
+                  hasTrial ? '免費試 7 天' : '查看方案',
                   style: TextStyle(
                       fontSize: 15.sp, fontWeight: FontWeight.w600),
                 ),

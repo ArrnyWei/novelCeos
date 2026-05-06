@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '../../models/reading_theme.dart';
 import '../../services/reading_settings_service.dart';
 import '../../widgets/reading_settings_overlay.dart';
 import 'horizontal_reader_page.dart';
@@ -114,14 +116,21 @@ class ReaderPage extends StatelessWidget {
                                 horizontal: 16.w,
                                 vertical: 12.h,
                               ),
-                              child: Obx(() => Text(
-                                    ctrl.chapterContent.value,
-                                    style: TextStyle(
+                              child: Obx(() {
+                                final font = ReadingFont.findById(
+                                    settings.fontFamilyId.value);
+                                return Text(
+                                  ctrl.chapterContent.value,
+                                  style: GoogleFonts.getFont(
+                                    font.googleFontName,
+                                    textStyle: TextStyle(
                                       fontSize: settings.fontSize.value,
                                       height: settings.lineSpacing.value,
                                       color: txtColor,
                                     ),
-                                  )),
+                                  ),
+                                );
+                              }),
                             ),
                           ),
                   ),

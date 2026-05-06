@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '../services/reading_settings_service.dart';
+import '../models/reading_theme.dart';
 import '../pages/reader/reader_controller.dart';
+import '../pages/settings/subscription_page.dart';
+import '../services/reading_settings_service.dart';
+import '../services/subscription_service.dart';
 
 class ReadingSettingsOverlay extends StatelessWidget {
   final ReaderController ctrl;
@@ -139,6 +143,13 @@ class ReadingSettingsOverlay extends StatelessWidget {
                             ),
                           ),
 
+                          // Font family（Premium 字體選擇）
+                          _SettingRow(
+                            label: '字體',
+                            child: Expanded(child: _FontPicker(settings: settings)),
+                          ),
+                          SizedBox(height: 4.h),
+
                           // Line spacing
                           _SettingRow(
                             label: '行距',
@@ -260,6 +271,15 @@ class ReadingSettingsOverlay extends StatelessWidget {
 
                           SizedBox(height: 8.h),
 
+                          // Reading theme packs（Premium 進階主題）
+                          _SettingRow(
+                            label: '主題',
+                            child:
+                                Expanded(child: _ThemePicker(settings: settings)),
+                          ),
+
+                          SizedBox(height: 8.h),
+
                           // Language
                           _SettingRow(
                             label: '語言',
@@ -280,6 +300,9 @@ class ReadingSettingsOverlay extends StatelessWidget {
                           ),
 
                           SizedBox(height: 4.h),
+
+                          // 訂閱導流（淡）— 訂閱者自動隱藏
+                          const _PremiumHintRow(),
                         ],
                       )),
                 ),
@@ -289,6 +312,217 @@ class ReadingSettingsOverlay extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ─── Font picker (字體選擇，Premium gating) ────────────────────────────────
+
+class _FontPicker extends StatelessWidget {
+  final ReadingSettingsService settings;
+  const _FontPicker({required this.settings});
+
+  bool get _isSubscribed {
+    if (!Get.isRegistered<SubscriptionService>()) return false;
+    return Get.find<SubscriptionService>().isSubscribed.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 36.h,
+      child: Obx(() {
+        final currentId = settings.fontFamilyId.value;
+        final subscribed = _isSubscribed;
+        return ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: ReadingFont.presets.length,
+          separatorBuilder: (_, __) => SizedBox(width: 6.w),
+          itemBuilder: (_, i) {
+            final font = ReadingFont.presets[i];
+            final selected = font.id == currentId;
+            final locked = font.isPremium && !subscribed;
+            return _PickerChip(
+              label: font.label,
+              labelStyle: GoogleFonts.getFont(
+                font.googleFontName,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              selected: selected,
+              locked: locked,
+              onTap: () {
+                if (locked) {
+                  Get.to(() => const SubscriptionPage());
+                  return;
+                }
+                settings.setFontFamilyId(font.id);
+              },
+            );
+          },
+        );
+      }),
+    );
+  }
+}
+
+// ─── Theme picker (進階主題包，Premium gating) ──────────────────────────────
+
+class _ThemePicker extends StatelessWidget {
+  final ReadingSettingsService settings;
+  const _ThemePicker({required this.settings});
+
+  bool get _isSubscribed {
+    if (!Get.isRegistered<SubscriptionService>()) return false;
+    return Get.find<SubscriptionService>().isSubscribed.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 36.h,
+      child: Obx(() {
+        final currentId = settings.selectedThemeId.value;
+        final subscribed = _isSubscribed;
+        return ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: ReadingTheme.presets.length,
+          separatorBuilder: (_, __) => SizedBox(width: 6.w),
+          itemBuilder: (_, i) {
+            final theme = ReadingTheme.presets[i];
+            final selected = theme.id == currentId;
+            final locked = theme.isPremium && !subscribed;
+            return _PickerChip(
+              label: theme.label,
+              swatchColor: theme.bgColor,
+              swatchBorder: theme.fgColor,
+              selected: selected,
+              locked: locked,
+              onTap: () {
+                if (locked) {
+                  Get.to(() => const SubscriptionPage());
+                  return;
+                }
+                settings.applyTheme(theme);
+              },
+            );
+          },
+        );
+      }),
+    );
+  }
+}
+
+// ─── Generic picker chip with optional swatch + lock icon ──────────────────
+
+class _PickerChip extends StatelessWidget {
+  final String label;
+  final TextStyle? labelStyle;
+  final Color? swatchColor;
+  final Color? swatchBorder;
+  final bool selected;
+  final bool locked;
+  final VoidCallback onTap;
+
+  const _PickerChip({
+    required this.label,
+    this.labelStyle,
+    this.swatchColor,
+    this.swatchBorder,
+    required this.selected,
+    required this.locked,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final borderColor = selected ? cs.primary : cs.outlineVariant;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18.r),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18.r),
+          border: Border.all(color: borderColor, width: selected ? 1.5 : 1),
+          color: selected ? cs.primaryContainer.withValues(alpha: 0.4) : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (swatchColor != null) ...[
+              Container(
+                width: 14.w,
+                height: 14.w,
+                decoration: BoxDecoration(
+                  color: swatchColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: swatchBorder ?? cs.outlineVariant,
+                    width: 1,
+                  ),
+                ),
+              ),
+              SizedBox(width: 6.w),
+            ],
+            Text(
+              label,
+              style: labelStyle ?? TextStyle(fontSize: 12.sp),
+            ),
+            if (locked) ...[
+              SizedBox(width: 4.w),
+              Icon(Icons.lock,
+                  size: 11.sp, color: cs.onSurfaceVariant.withValues(alpha: 0.7)),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 閱讀器設定 overlay 底部的「升級 Premium」淡入口。
+/// 訂閱者自動隱藏；不主動跳，使用者開 overlay 才看得到。
+class _PremiumHintRow extends StatelessWidget {
+  const _PremiumHintRow();
+
+  @override
+  Widget build(BuildContext context) {
+    if (!Get.isRegistered<SubscriptionService>()) {
+      return const SizedBox.shrink();
+    }
+    final sub = Get.find<SubscriptionService>();
+    return Obx(() {
+      if (sub.isSubscribed.value) return const SizedBox.shrink();
+      final hasTrial = sub.hasFreeTrialOffer.value;
+      final cs = Theme.of(context).colorScheme;
+      return InkWell(
+        onTap: () => Get.to(() => const SubscriptionPage()),
+        borderRadius: BorderRadius.circular(8.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.workspace_premium,
+                  size: 14.sp, color: Colors.amber[700]),
+              SizedBox(width: 6.w),
+              Text(
+                hasTrial ? '免費試 7 天 · 沉浸閱讀' : '升級 Premium · 沉浸閱讀',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: cs.onSurfaceVariant,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(width: 4.w),
+              Icon(Icons.chevron_right,
+                  size: 14.sp, color: cs.onSurfaceVariant),
+            ],
+          ),
+        ),
+      );
+    });
   }
 }
 

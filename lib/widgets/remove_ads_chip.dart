@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../pages/settings/subscription_page.dart';
+import '../services/subscription_service.dart';
 
 /// 黏在 banner 廣告正上方的薄條 chip。
-/// 「升級 Premium 移除廣告」CTA。點擊 → SubscriptionPage。
+/// 有試用 offer → 「免費試 7 天 · 移除廣告」；否則「升級 Premium 移除廣告」。
+/// 點擊 → SubscriptionPage。
 ///
 /// 由 [AdBannerWidget] 負責 visibility — 廣告沒顯示就不會渲染這個 chip。
 class RemoveAdsChip extends StatelessWidget {
@@ -27,16 +29,20 @@ class RemoveAdsChip extends StatelessWidget {
                   size: 14.sp, color: Colors.amber[800]),
               SizedBox(width: 6.w),
               Expanded(
-                child: Text(
-                  '升級 Premium 移除廣告',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: cs.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Obx(() {
+                  final hasTrial = Get.isRegistered<SubscriptionService>() &&
+                      Get.find<SubscriptionService>().hasFreeTrialOffer.value;
+                  return Text(
+                    hasTrial ? '免費試 7 天 · 移除廣告' : '升級 Premium 移除廣告',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurface,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  );
+                }),
               ),
               Icon(Icons.chevron_right,
                   size: 16.sp, color: cs.onSurfaceVariant),

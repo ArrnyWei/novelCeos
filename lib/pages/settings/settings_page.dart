@@ -86,9 +86,7 @@ class SettingsPage extends StatelessWidget {
                               ),
                               SizedBox(height: 2.h),
                               Text(
-                                isSubscribed && expiry != null
-                                    ? '訂閱至 ${expiry.year}/${expiry.month.toString().padLeft(2, '0')}/${expiry.day.toString().padLeft(2, '0')}'
-                                    : '去除廣告，享受沉浸式閱讀',
+                                _premiumSubtitle(sub, expiry, isSubscribed),
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   color: Theme.of(context)
@@ -246,6 +244,29 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// 設定頁 Premium 升級卡的副標：
+  /// - 已訂閱：顯示到期日（終身則顯示「永久使用」）
+  /// - 未訂閱 + 有試用 offer：「先免費試 7 天，去除廣告」
+  /// - 未訂閱 + 無試用 offer：「去除廣告，享受沉浸式閱讀」
+  String _premiumSubtitle(
+    SubscriptionService sub,
+    DateTime? expiry,
+    bool isSubscribed,
+  ) {
+    if (isSubscribed) {
+      if (sub.isLifetime.value) return '終身解鎖 · 永久使用';
+      if (expiry != null) {
+        final m = expiry.month.toString().padLeft(2, '0');
+        final d = expiry.day.toString().padLeft(2, '0');
+        return '訂閱至 ${expiry.year}/$m/$d';
+      }
+      return 'Premium 會員';
+    }
+    return sub.hasFreeTrialOffer.value
+        ? '先免費試 7 天，去除廣告'
+        : '去除廣告，享受沉浸式閱讀';
   }
 
   Future<void> _confirmClearCache() async {
